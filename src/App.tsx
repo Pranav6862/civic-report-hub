@@ -9,6 +9,10 @@ import Auth from "./pages/Auth";
 import SubmitComplaint from "./pages/SubmitComplaint";
 import MyComplaints from "./pages/MyComplaints";
 import AdminDashboard from "./pages/AdminDashboard";
+import RoadsAdmin from "./pages/admin/RoadsAdmin";
+import WasteAdmin from "./pages/admin/WasteAdmin";
+import ElectricityAdmin from "./pages/admin/ElectricityAdmin";
+import SuperAdmin from "./pages/admin/SuperAdmin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +30,10 @@ const App = () => (
             <Route path="/submit" element={<SubmitComplaint />} />
             <Route path="/my-complaints" element={<MyComplaints />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/roads" element={<RoadsAdmin />} />
+            <Route path="/admin/waste" element={<WasteAdmin />} />
+            <Route path="/admin/electricity" element={<ElectricityAdmin />} />
+            <Route path="/admin/super" element={<SuperAdmin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

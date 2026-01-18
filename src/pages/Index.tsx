@@ -2,10 +2,41 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, MapPin, ClipboardList, Shield, ArrowRight, LogOut, Loader2 } from "lucide-react";
+import { AlertTriangle, MapPin, ClipboardList, Shield, ArrowRight, LogOut, Loader2, Construction, Trash2, Zap } from "lucide-react";
 
 export default function Index() {
-  const { user, loading, isAdmin, signOut } = useAuth();
+  const { user, loading, isAdmin, adminCategory, signOut } = useAuth();
+
+  // Helper to get admin dashboard link based on role
+  const getAdminLink = () => {
+    switch (adminCategory) {
+      case "roads": return "/admin/roads";
+      case "waste": return "/admin/waste";
+      case "electricity": return "/admin/electricity";
+      case "all": return "/admin/super";
+      default: return "/admin";
+    }
+  };
+
+  const getAdminLabel = () => {
+    switch (adminCategory) {
+      case "roads": return "Roads Dashboard";
+      case "waste": return "Waste Dashboard";
+      case "electricity": return "Electricity Dashboard";
+      case "all": return "Super Admin";
+      default: return "Admin Dashboard";
+    }
+  };
+
+  const getAdminIcon = () => {
+    switch (adminCategory) {
+      case "roads": return <Construction className="h-4 w-4 mr-2" />;
+      case "waste": return <Trash2 className="h-4 w-4 mr-2" />;
+      case "electricity": return <Zap className="h-4 w-4 mr-2" />;
+      case "all": return <Shield className="h-4 w-4 mr-2" />;
+      default: return null;
+    }
+  };
 
   if (loading) {
     return (
@@ -35,7 +66,10 @@ export default function Index() {
               <>
                 {isAdmin && (
                   <Button variant="outline" asChild>
-                    <Link to="/admin">Admin Dashboard</Link>
+                    <Link to={getAdminLink()}>
+                      {getAdminIcon()}
+                      {getAdminLabel()}
+                    </Link>
                   </Button>
                 )}
                 <Button variant="outline" asChild>
