@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ const passwordSchema = z.string().min(6, "Password must be at least 6 characters
 const nameSchema = z.string().min(2, "Name must be at least 2 characters");
 
 export default function Auth() {
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, signIn, signUp, isAdmin, adminCategory } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -35,8 +35,34 @@ export default function Auth() {
     );
   }
 
+  // Redirect logged-in users based on their role
+  useEffect(() => {
+    if (user && !loading) {
+      if (isAdmin) {
+        // Redirect to appropriate admin dashboard
+        if (adminCategory === "all") {
+          navigate("/admin", { replace: true });
+        } else if (adminCategory === "roads") {
+          navigate("/admin/roads", { replace: true });
+        } else if (adminCategory === "waste") {
+          navigate("/admin/waste", { replace: true });
+        } else if (adminCategory === "electricity") {
+          navigate("/admin/electricity", { replace: true });
+        } else {
+          navigate("/admin", { replace: true });
+        }
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, loading, isAdmin, adminCategory, navigate]);
+
   if (user) {
-    return <Navigate to="/" replace />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   const validateLogin = () => {
@@ -94,9 +120,8 @@ export default function Auth() {
           : error.message,
         variant: "destructive"
       });
-    } else {
-      navigate("/");
     }
+    // Navigation is handled by useEffect based on role
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -120,8 +145,8 @@ export default function Auth() {
         title: "Account Created",
         description: "Welcome! You can now submit complaints."
       });
-      navigate("/");
     }
+    // Navigation is handled by useEffect based on role
   };
 
   return (
