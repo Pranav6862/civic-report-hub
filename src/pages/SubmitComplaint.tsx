@@ -63,16 +63,25 @@ export default function SubmitComplaint() {
 
     const { data: { publicUrl } } = supabase.storage.from("complaint-images").getPublicUrl(fileName);
 
-    await createComplaint.mutateAsync({
-      category,
-      description,
-      image_url: publicUrl,
-      latitude,
-      longitude
-    });
-
-    setUploading(false);
-    navigate("/my-complaints");
+    try {
+      await createComplaint.mutateAsync({
+        category,
+        description,
+        image_url: publicUrl,
+        latitude,
+        longitude
+      });
+      navigate("/my-complaints");
+    } catch (err: any) {
+      console.error("Submit error:", err);
+      toast({
+        title: "Submission Failed",
+        description: err?.message || "Failed to submit complaint. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const isValid = category && description.trim() && imageFile && latitude && longitude;
