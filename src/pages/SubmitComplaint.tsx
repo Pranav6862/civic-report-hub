@@ -47,7 +47,8 @@ export default function SubmitComplaint() {
     if (!category || !description || !imageFile || !latitude || !longitude) return;
 
     setUploading(true);
-    const fileName = `${user.id}/${Date.now()}-${imageFile.name}`;
+    const sanitizedName = imageFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const fileName = `${user.id}/${Date.now()}-${sanitizedName}`;
     const { error: uploadError } = await supabase.storage.from("complaint-images").upload(fileName, imageFile);
     
     if (uploadError) {
