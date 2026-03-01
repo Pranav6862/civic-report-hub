@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useGeolocation } from "@/hooks/useGeolocation";
@@ -19,6 +20,7 @@ export default function SubmitComplaint() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { latitude, longitude, error: geoError, loading: geoLoading, getLocation } = useGeolocation();
   const createComplaint = useCreateComplaint();
+  const { toast } = useToast();
 
   const [category, setCategory] = useState<ComplaintCategory | null>(null);
   const [description, setDescription] = useState("");
@@ -49,7 +51,13 @@ export default function SubmitComplaint() {
     const { error: uploadError } = await supabase.storage.from("complaint-images").upload(fileName, imageFile);
     
     if (uploadError) {
+      console.error("Upload error:", uploadError);
       setUploading(false);
+      toast({
+        title: "Upload Failed",
+        description: uploadError.message || "Failed to upload image. Please try again.",
+        variant: "destructive"
+      });
       return;
     }
 
